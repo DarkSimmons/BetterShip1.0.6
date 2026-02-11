@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  title: BetterShip
+  version: 1.0.0
+  description: automatic shipping update agent, using REST and Ollama3
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /health:
+    get:
+      summary: health check
+      responses:
+        "200":
+          description: OK
+
+  /orders:
+    get:
+      summary: list orders
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+        - in: query
+          name: offset
+          schema: { type: integer, default: 0, minimum: 0 }
+      responses:
+        "200": { description: OK }
+
+    post:
+      summary: create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - orderNumber
+                - buyerName
+                - shippingName
+                - shippingAddress1
+                - shippingCity
+                - shippingPostalCode
+                - shippingCountry
+                - items
+              properties:
+                orderNumber: { type: string, example: "EBAY-10001" }
+                buyerName: { type: string, example: "Mario Rossi" }
+                buyerEmail: { type: string, example: "mario@example.com" }
+                shippingName: { type: string, example: "Mario Rossi" }
+                shippingAddress1: { type: string, example: "Via Roma 1" }
+                shippingAddress2: { type: string, example: "Scala B" }
+                shippingCity: { type: string, example: "Bologna" }
+                shippingPostalCode: { type: string, example: "40100" }
+                shippingProvince: { type: string, example: "BO" }
+                shippingCountry: { type: string, example: "IT" }
+                status: { type: string, example: "NOT_SHIPPED" }
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [title, quantity]
+                    properties:
+                      title: { type: string, example: "Cavo USB-C" }
+                      sku: { type: string, example: "USB-C-001" }
+                      quantity: { type: integer, example: 2 }
+                      unitPrice: { type: number, example: 9.99 }
+                      currency: { type: string, example: "EUR" }
+      responses:
+        "201": { description: Created }
+        "409": { description: Duplicate orderNumber }
+
+  /orders/{id}:
+    get:
+      summary: get order by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+
+    delete:
+      summary: delete order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Deleted }
+        "404": { description: Not found }
+
+  /orders/{id}/status:
+    patch:
+      summary: update order status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [NOT_SHIPPED, SHIPPED, CANCELLED]
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+
+  /ai/orders/{id}/summary:
+    post:
+      summary: generate AI summary for an order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+
+  /ai/orders/{id}/email:
+    post:
+      summary: generate AI email for an order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stage:
+                  type: string
+                  enum: [received, shipped, delayed]
+                  example: shipped
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+
+  /ai/support/chat:
+    post:
+      summary: customer support chat with order context
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [orderId, message]
+              properties:
+                orderId: { type: integer, example: 1 }
+                message: { type: string, example: "Quando arriva il pacco?" }
+                language: { type: string, enum: [it, en], example: it }
+                tone: { type: string, enum: [neutral, friendly, professional], example: professional }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
