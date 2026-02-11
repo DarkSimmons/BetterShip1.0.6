@@ -1,6 +1,6 @@
 # BetterShip 
 
-- **AI Order Assistant
+- **AI Order Assistant**
 - **REST APIs** (Node.js + Express)
 - **SQLite** persistence
 - **Generative AI** using **Ollama locally** 
