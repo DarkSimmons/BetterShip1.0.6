@@ -4,9 +4,9 @@
 - **SQLite** persistence
 - **Generative AI** using **Ollama locally** 
 
-This is a little project to simplify the management of shipping updates and requests
-I used REST APIs and Ollama to automatically update the customer and answering simple question about the shipping
-I've given some guradrails (but sometimes is allucinating)
+This is a little project to simplify the management of shipping updates and requests.
+I used REST APIs and Ollama to automatically update the customer and answering simple question about the shipping.
+I've given some guradrails (but sometimes is allucinating).
 
 ### Orders REST API
 - Create, list, read, update status, delete orders
