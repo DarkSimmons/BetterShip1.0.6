@@ -5,7 +5,7 @@
 - **SQLite** persistence
 - **Generative AI** using **Ollama locally** 
 
-Betterhip is an AI agentic assistant to simplify the management of shipping updates and requests.
+Betterhip is an AI agentic assistant, used simplify the management of shipping updates and requests.
 I used REST APIs and Ollama to automatically update the customer and answering simple question about the shipping.
 I've given some guardrails (but sometimes is allucinating).
 
